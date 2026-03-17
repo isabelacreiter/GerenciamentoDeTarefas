@@ -1,0 +1,153 @@
+﻿@model IEnumerable<Tarefa>
+
+<div class="row">
+
+    <div class="col-md-3">
+
+        <form asp-action="Filtrar" asp-controller="Tarefas" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Categoria:</label>
+                <select name="filtro" class="form-select"
+                        asp-items="@(new SelectList(
+                                                    ViewBag.Categorias,
+                                                    "CategoriaId",
+                                                    "Nome",
+                                                    ViewBag.Filtros?.CategoriaId))">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Prazo:</label>
+                <select name="filtro" class="form-select"
+                        asp-items="@(new SelectList(
+                                        ViewBag.Prazo,
+                                        "Key",
+                                        "Value",
+                                        ViewBag.Filtros?.Prazo))">
+                    <option value="todos">Todos</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Situação:</label>
+                <select name="filtro" class="form-select"
+                        asp-items="@(new SelectList(
+                                                    ViewBag.Status,
+                                                    "StatusId",
+                                                    "Nome",
+                                                    ViewBag.Filtros?.StatusId))">
+                    <option value="0">Todas</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Criação:</label>
+                <select name="filtro" class="form-select"
+                        asp-items="@(new SelectList(
+                                                    ViewBag.Criacao,
+                                                    "Key",
+                                                    "Value",
+                                                    ViewBag.Filtros?.Criacao))">
+                    <option value="todos">Todas</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 mb-2">
+                Filtrar
+            </button>
+
+            <a asp-action="Index" asp-controller="Tarefas"
+               class="btn btn-secondary w-100">
+                Limpar
+            </a>
+
+        </form>
+
+    </div>
+
+    <div class="col-md-9">
+
+        <form asp-action="MarcarCompleto"
+              asp-controller="Tarefas"
+              method="post"
+              asp-route-id="@ViewBag.Filtros?.FiltroString">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Data de vencimento</th>
+                        <th>Status</th>
+                        <th style="width:150px"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model?.Any() == true)
+                    {
+                        foreach (var tarefa in Model)
+                        {
+                            string atrasado = tarefa.Atrasado ? "bg-warning" : "";
+
+                            <tr>
+                                <td><strong>@tarefa.Titulo</strong></td>
+
+                                <td>@tarefa.Descricao</td>
+
+                                <td>@(tarefa.Categoria?.Nome ?? "-")</td>
+
+                                <td class="@atrasado">
+                                    @(tarefa.DataVencimento?.ToShortDateString() ?? "-")
+                                </td>
+
+                                <td class="@atrasado">
+                                    @(tarefa.Status?.Nome ?? "-")
+                                </td>
+
+                                <td>
+                                    @if (tarefa.StatusId == 1)
+                                    {
+                                        <button type="submit"
+                                                class="btn btn-primary btn-sm"
+                                                name="id"
+                                                value="@tarefa.Id">
+                                            Completar
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Concluída</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                Nenhuma tarefa encontrada
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </form>
+
+        <form asp-action="DeletarCompletos" asp-controller="Tarefas" method="post">
+        <a asp-action="Adicionar" asp-controller="Tarefas" class="btn btn-success">Adicionar Tarefa</a>
+        <button type="submit" class="btn btn-danger">Deletar Tarefas Completas</button>
+       </form>
+
+    </div>
+
+</div>

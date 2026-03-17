@@ -1,0 +1,45 @@
+﻿@model GerenciamentoDeTarefas.Models.Tarefa
+
+<h2>Nova Tarefa</h2>
+
+<form asp-action="Adicionar" method="post">
+
+    <div class="mb-3">
+        <label>Título</label>
+        <input asp-for="Titulo" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+        <label>Descrição</label>
+        <textarea asp-for="Descricao" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Data de Vencimento</label>
+        <input asp-for="DataVencimento"
+               type="date"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Categoria</label>
+        <select asp-for="CategoriaId"
+                asp-items="@(new SelectList(
+                                    ViewBag.Categorias,
+                                    "CategoriaId",
+                                    "Nome"))"
+                class="form-select">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Salvar
+    </button>
+
+    <a asp-action="Index"
+       asp-controller="Tarefas"
+       class="btn btn-secondary">
+        Cancelar
+    </a>
+
+</form>
